@@ -18,9 +18,12 @@ const app = express();
 // Enhanced CORS configuration for production
 const corsOptions = {
   origin: [
+    'http://localhost:3000',
     'http://localhost:5000',
+    'https://portal-finder-blond.vercel.app',
+    'https://portalfinder.onrender.com',
     'https://portal-finder.netlify.app',
-    'https://portal-finder.onrender.com',
+    /\.vercel\.app$/,
     /\.netlify\.app$/,
     /\.onrender\.com$/
   ],
@@ -31,18 +34,8 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// Add CORS headers manually as fallback
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  
-  if (req.method === 'OPTIONS') {
-    res.sendStatus(200);
-  } else {
-    next();
-  }
-});
+// Handle preflight OPTIONS requests
+app.options('*', cors(corsOptions));
 
 // Enable trust proxy for accurate IP addresses (important for rate limiting)
 app.set('trust proxy', 1);
@@ -85,7 +78,7 @@ app.post('/api/admin/authenticate', (req, res) => {
 // Serve frontend
 app.use(express.static(path.join(__dirname, "../frontend")));
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 // Initialize cache service
 async function initializeServices() {
