@@ -77,7 +77,7 @@ JSON Format:
         "X-Title": "Portal Finder"
       },
       body: JSON.stringify({
-        "model": "mistralai/mistral-7b-instruct",
+        "model": "google/gemma-3-4b-it:free",
         "messages": [
           {
             "role": "user",
@@ -96,7 +96,13 @@ JSON Format:
     }
 
     const data = await response.json();
-    const content = data.choices[0].message.content;
+    const rawContent = data.choices[0].message.content;
+    
+    // Strip markdown code fences if present (e.g. ```json ... ```)
+    const content = rawContent
+      .replace(/^```(?:json)?\s*/i, '')
+      .replace(/\s*```\s*$/i, '')
+      .trim();
     
     try {
       const parsedResult = JSON.parse(content);
