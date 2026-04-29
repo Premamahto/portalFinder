@@ -34,8 +34,8 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// Handle preflight OPTIONS requests
-app.options('*', cors(corsOptions));
+// Handle preflight OPTIONS requests (Express 5 compatible wildcard)
+app.options('/{*path}', cors(corsOptions));
 
 // Enable trust proxy for accurate IP addresses (important for rate limiting)
 app.set('trust proxy', 1);
