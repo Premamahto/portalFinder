@@ -73,7 +73,7 @@ JSON Format:
       headers: {
         "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
         "Content-Type": "application/json",
-        "HTTP-Referer": "http://localhost:5000",
+        "HTTP-Referer": process.env.APP_URL || "https://portalfinder.onrender.com",
         "X-Title": "Portal Finder"
       },
       body: JSON.stringify({
@@ -90,7 +90,9 @@ JSON Format:
     });
 
     if (!response.ok) {
-      throw new Error(`API request failed: ${response.statusText}`);
+      const errorBody = await response.text();
+      console.error(`[SEARCH] OpenRouter API error ${response.status}:`, errorBody);
+      throw new Error(`API request failed: ${response.status} ${response.statusText} - ${errorBody}`);
     }
 
     const data = await response.json();

@@ -96,6 +96,13 @@ async function initializeServices() {
 app.listen(PORT, async () => {
   console.log(`✅ Server running at http://localhost:${PORT}`);
   
+  // Warn if API key is missing
+  if (!process.env.OPENROUTER_API_KEY) {
+    console.error('❌ [CRITICAL] OPENROUTER_API_KEY is not set! Search will not work.');
+  } else {
+    console.log('✅ OPENROUTER_API_KEY is set');
+  }
+  
   // Initialize services after server starts
   await initializeServices();
   
